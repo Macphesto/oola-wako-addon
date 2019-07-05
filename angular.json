@@ -42,7 +42,11 @@
                 "input": "src/app/app.scss"
               }
             ],
-            "scripts": [],
+            "scripts": [
+              "node_modules/systemjs/dist/s.js",
+              "node_modules/systemjs/dist/extras/named-register.js",
+              "node_modules/systemjs/dist/extras/amd.js"
+            ],
             "es5BrowserSupport": true
           },
           "configurations": {
@@ -127,8 +131,13 @@
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": ["src/tsconfig.app.json", "src/tsconfig.spec.json"],
-            "exclude": ["**/node_modules/**"]
+            "tsConfig": [
+              "src/tsconfig.app.json",
+              "src/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         },
         "ionic-cordova-build": {
@@ -157,30 +166,48 @@
         }
       }
     },
-    "app-e2e": {
-      "root": "e2e/",
+    "plugin": {
+      "root": "projects/plugin/",
+      "sourceRoot": "projects/plugin/src",
       "projectType": "application",
+      "prefix": "app",
+      "schematics": {},
       "architect": {
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
+        "build": {
+          "builder": "./builders:plugin",
           "options": {
-            "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "app:serve"
+            "outputPath": "src/assets/plugins",
+            "index": "",
+            "main": "projects/plugin/src/main.ts",
+            "polyfills": "",
+            "tsConfig": "projects/plugin/tsconfig.app.json",
+            "assets": [],
+            "styles": [
+              "projects/plugin/src/styles.css"
+            ],
+            "scripts": [],
+            "es5BrowserSupport": false
           },
           "configurations": {
             "production": {
-              "devServerTarget": "app:serve:production"
-            },
-            "ci": {
-              "devServerTarget": "app:serve:ci"
+              "fileReplacements": [],
+              "optimization": true,
+              "outputHashing": "none",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": false,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": "e2e/tsconfig.e2e.json",
-            "exclude": ["**/node_modules/**"]
           }
         }
       }
