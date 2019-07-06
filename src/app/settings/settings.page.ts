@@ -3,14 +3,14 @@ import { PluginLoaderService } from '../services/plugin-loarder/plugin-loader.se
 
 @Component({
   selector: 'app-tab2',
-  templateUrl: 'tab2.page.html',
-  styleUrls: ['tab2.page.scss']
+  templateUrl: 'settings.page.html',
+  styleUrls: ['settings.page.scss']
 })
-export class Tab2Page implements OnInit {
+export class SettingsPage implements OnInit {
   @ViewChild('settingsRef', { read: ViewContainerRef })
   settingsRef: ViewContainerRef;
 
-  constructor(private injector: Injector, private pluginLoader: PluginLoaderService) {}
+  constructor(private pluginLoader: PluginLoaderService) {}
 
   ngOnInit() {
     this.loadPlugin();

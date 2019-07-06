@@ -10,23 +10,13 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicStorageModule } from '@ionic/storage';
-import { PluginLoaderFakeService } from './services/plugin-loarder/plugin-loader-fake.service';
 import { PluginLoaderService } from './services/plugin-loarder/plugin-loader.service';
-import { PluginModule } from '../../projects/plugin/src/plugin/plugin.module';
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, TranslateModule.forRoot(), IonicStorageModule.forRoot(), PluginModule],
-  providers: [
-    StatusBar,
-    SplashScreen,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    {
-      provide: PluginLoaderService,
-      useClass: PluginLoaderFakeService
-    }
-  ],
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, TranslateModule.forRoot(), IonicStorageModule.forRoot()],
+  providers: [StatusBar, SplashScreen, { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, PluginLoaderService],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppWakoLikeModule {}

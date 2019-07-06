@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-
-import { wakoLog } from '@wako-app/mobile-sdk';
+import { logData } from '../service/my-plugin.service';
 
 @Component({
   selector: 'app-settings',
@@ -13,8 +12,7 @@ export class SettingsComponent implements OnInit {
   constructor(public modalCtrl: ModalController, private translate: TranslateService) {}
 
   ngOnInit() {
-    wakoLog('Test Addon', 'plopplop');
-    console.log('translate', this.translate.currentLang);
-    console.log('translate', this.translate.instant('settings.title'));
+    logData('Current lang', this.translate.currentLang);
+    logData('Test instant translate', this.translate.instant('settings.title'));
   }
 }

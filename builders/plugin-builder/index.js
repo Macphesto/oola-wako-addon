@@ -11,9 +11,6 @@ class PluginBuilder extends build_angular_1.BrowserBuilder {
     buildWebpackConfig(root, projectRoot, host, options) {
         const pluginName = manifest.id;
         const moduleFullPath = './plugin/plugin.module#PluginModule';
-        // if (!this.options.modulePath) {
-        //   throw Error('Please define modulePath!');
-        // }
         if (!pluginName) {
             throw Error('Please provide pluginName!');
         }
@@ -33,7 +30,8 @@ class PluginBuilder extends build_angular_1.BrowserBuilder {
             // put here other common dependencies
             '@ionic/angular': 'ionic.angular',
             '@ionic/storage': 'ionic.storage',
-            '@wako/mobile-sdk': 'wako.mobile-sdk'
+            '@wako-app/mobile-sdk': 'wako.mobile-sdk',
+            '@ngx-translate/core': 'ngx-translate.core'
         };
         const ngCompilerPluginInstance = config.plugins.find(x => x.constructor && x.constructor.name === 'AngularCompilerPlugin');
         if (ngCompilerPluginInstance) {
@@ -131,7 +129,7 @@ function patchWebpackConfig(config: webpack.Configuration, options: JsonObject) 
     // put here other common dependencies
     '@ionic/angular': 'ionic.angular',
     '@ionic/storage': 'ionic.storage',
-    '@wako/mobile-sdk': 'wako.mobile-sdk'
+    '@wako-app/mobile-sdk': 'wako.mobile-sdk'
   };
 
 

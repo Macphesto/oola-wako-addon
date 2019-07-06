@@ -13,7 +13,7 @@ export class AppService {
   loadPlugins() {
     return this.pluginLoader.install('/assets/plugins/manifest.json').pipe(
       switchMap(() => {
-        return this.pluginLoader.loadAll('fr');
+        return this.pluginLoader.loadAll('en');
       })
     );
   }

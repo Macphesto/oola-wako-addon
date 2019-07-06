@@ -8,11 +8,20 @@ const routes: Routes = [
     component: TabsPage,
     children: [
       {
-        path: 'tab1',
+        path: 'movie',
         children: [
           {
             path: '',
-            loadChildren: '../tab1/tab1.module#Tab1PageModule'
+            loadChildren: '../movie/movie.module#MoviePageModule'
+          }
+        ]
+      },
+      {
+        path: 'episode',
+        children: [
+          {
+            path: '',
+            loadChildren: '../episode/episode.module#EpisodePageModule'
           }
         ]
       },
@@ -21,20 +30,20 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: '../tab2/tab2.module#Tab2PageModule'
+            loadChildren: '../settings/settings.module#SettingsPageModule'
           }
         ]
       },
       {
         path: '',
-        redirectTo: '/tabs/tab1',
+        redirectTo: '/tabs/movie',
         pathMatch: 'full'
       }
     ]
   },
   {
     path: '',
-    redirectTo: '/tabs/tab1',
+    redirectTo: '/tabs/movie',
     pathMatch: 'full'
   }
 ];

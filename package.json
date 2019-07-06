@@ -5,18 +5,19 @@
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",
-    "start": "npm run build:plugin:dev && concurrently \" npm run watch:plugin \"  \" ng serve --host=192.168.1.10 \" ",
-    "build": "ng build",
+    "start": "ng serve",
+    "start:wako-like": "npm run clean && npm run build:plugin:dev && concurrently \" npm run watch:plugin \"  \" ng run wako-like:serve \" ",
+    "build": "npm run clean && npm run build:plugin",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "postinstall": "npm run build:builders",
-    "watch:plugin": "gulp watch",
-    "build:plugin:dev": "ng build --project plugin --prod && npm run copy:resources:dev",
+    "clean": "rm -rf ./dist",
     "build:builders": "tsc -p builders/tsconfig.builders.json",
+    "watch:plugin": "gulp watch",
+    "build:plugin:dev": "ng build --project plugin --prod  --outputPath=src/assets/plugins && npm run copy:resources:dev",
     "copy:resources:dev": "cp projects/plugin/src/manifest.json ./src/assets/plugins && cp -r projects/plugin/src/i18n ./src/assets/plugins",
     "copy:resources": "cp projects/plugin/src/manifest.json ./dist && cp -r projects/plugin/src/i18n ./dist",
-    "build:plugin": "rm -rf ./dist && ng build --project plugin --prod --outputPath=./dist && npm run copy:resources"
+    "build:plugin": "ng build --project plugin --prod && npm run copy:resources"
   },
   "private": true,
   "dependencies": {

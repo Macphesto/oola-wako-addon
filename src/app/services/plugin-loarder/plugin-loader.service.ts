@@ -3,7 +3,7 @@ import { Injectable, Injector, NgModuleFactory, NgModuleRef, ViewContainerRef } 
 import { PLUGIN_EXTERNALS_MAP } from './plugin-externals';
 
 import { EpisodeDetailBaseComponent, MovieDetailBaseComponent, PluginBaseService, WakoBaseHttpService } from '@wako-app/mobile-sdk';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { forkJoin, from, of } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -27,12 +27,13 @@ SystemJs.instantiate = function(id) {
 };
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class PluginLoaderService {
   private pluginsMap = new Map<string, PluginMap>();
 
   constructor(private translateService: TranslateService, private storage: Storage, private injector: Injector) {
+
     this.provideExternals();
   }
 
@@ -56,10 +57,9 @@ export class PluginLoaderService {
         pluginObjectStored.manifestUrl = manifestUrl;
         pluginObjectStored.manifest = manifest;
 
-        // Save entryPoint
         return WakoBaseHttpService.get<string>(pluginUrl).pipe(
-          switchMap(source => {
-            pluginObjectStored.source = source;
+          switchMap(pluginSource => {
+            pluginObjectStored.source = pluginSource;
             if (manifest.languages) {
               pluginObjectStored.languages = {};
               const obss = [];
@@ -114,7 +114,6 @@ export class PluginLoaderService {
 
   loadAll(lang: string) {
     this.translateService.use(lang);
-    console.log('LAL', this.translateService.currentLang);
 
     return from(this.getAllInstalled()).pipe(
       switchMap(list => {
@@ -135,7 +134,6 @@ export class PluginLoaderService {
         source = plugin.source;
 
         return from(SystemJs.import(document.location.href + '/' + pluginId)).pipe(
-          // return from(SystemJs.import('/assets/plugins/plugin.my-plugin.js')).pipe(
           tap(module => {
             return this.initialize(plugin, lang, module.default.default);
           })
@@ -169,15 +167,15 @@ export class PluginLoaderService {
         const compFactory = moduleRef.componentFactoryResolver.resolveComponentFactory<MovieDetailBaseComponent>(moduleType.movieComponent);
         const movieComponent = viewContainerRef.createComponent<MovieDetailBaseComponent>(compFactory);
 
-        movieComponent.instance.setMovie(data);
+        movieComponent.instance.setMovie(data.movie);
       } else if (action === 'episodes' && moduleType.episodeComponent) {
         const compFactory = moduleRef.componentFactoryResolver.resolveComponentFactory<EpisodeDetailBaseComponent>(
           moduleType.episodeComponent
         );
         const episodeComponent = viewContainerRef.createComponent<EpisodeDetailBaseComponent>(compFactory);
 
-        // TODO
-        // episodeComponent.instance.setShowEpisode(data);
+        episodeComponent.instance.setShowEpisode(data.show, data.episode);
+
       } else if (action === 'settings' && moduleType.settingsComponent) {
         const compFactory = moduleRef.componentFactoryResolver.resolveComponentFactory<any>(moduleType.settingsComponent);
         viewContainerRef.createComponent<any>(compFactory);
@@ -188,7 +186,7 @@ export class PluginLoaderService {
 
 declare type PluginAction = 'movies' | 'episodes';
 
-interface PluginMap {
+export interface PluginMap {
   plugin: PluginObjectStored;
   moduleFactory: NgModuleFactory<any>;
   moduleRef: NgModuleRef<any>;
