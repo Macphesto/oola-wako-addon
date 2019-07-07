@@ -1,7 +1,5 @@
-import { Component, Injector, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { PluginLoaderService } from '../services/plugin-loarder/plugin-loader.service';
-
-import { Movie } from '@wako-app/mobile-sdk';
+import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { Movie, PluginLoaderService } from '@wako-app/mobile-sdk';
 
 @Component({
   selector: 'app-tab1',

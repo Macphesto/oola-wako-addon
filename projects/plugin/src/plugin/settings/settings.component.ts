@@ -1,15 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { logData } from '../service/my-plugin.service';
+import { logData } from '../service/plugin.service';
 
 @Component({
-  selector: 'app-settings',
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit {
-  constructor(public modalCtrl: ModalController, private translate: TranslateService) {}
+  constructor(private translate: TranslateService) {}
 
   ngOnInit() {
     logData('Current lang', this.translate.currentLang);

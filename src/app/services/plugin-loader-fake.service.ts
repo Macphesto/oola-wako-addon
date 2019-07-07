@@ -1,13 +1,18 @@
 import { ComponentFactoryResolver, Injectable, Injector, ViewContainerRef } from '@angular/core';
 
-import { EpisodeDetailBaseComponent, MovieDetailBaseComponent, PluginBaseService, WakoBaseHttpService } from '@wako-app/mobile-sdk';
+import {
+  EpisodeDetailBaseComponent,
+  MovieDetailBaseComponent,
+  PluginBaseService, PluginManifest,
+  PluginMap, PluginObjectStored,
+  WakoBaseHttpService
+} from '@wako-app/mobile-sdk';
 import { forkJoin, from, of } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Storage } from '@ionic/storage';
-import { PluginManifest, PluginMap, PluginObjectStored } from './plugin-loader.service';
 import { switchMap, tap } from 'rxjs/operators';
-import { PluginModule } from '../../../../projects/plugin/src/plugin/plugin.module';
+import { PluginModule } from '../../../projects/plugin/src/plugin/plugin.module';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +29,7 @@ export class PluginLoaderFakeService {
     console.log('PluginLoaderFakeService');
   }
 
-  install(manifestUrl) {
+  install(manifestUrl: string, lang: string) {
     manifestUrl = manifestUrl.replace('/plugins/', '/');
 
     let pluginId = null;
@@ -46,12 +51,12 @@ export class PluginLoaderFakeService {
         if (manifest.languages) {
           pluginObjectStored.languages = {};
           const obss = [];
-          Object.keys(manifest.languages).forEach(lang => {
-            const langUrl = manifest.languages[lang].match('http') ? manifest.languages[lang] : baseUrl + manifest.languages[lang];
+          Object.keys(manifest.languages).forEach(langKey => {
+            const langUrl = manifest.languages[langKey].match('http') ? manifest.languages[langKey] : baseUrl + manifest.languages[langKey];
 
             const obs = WakoBaseHttpService.get(langUrl).pipe(
               tap(data => {
-                pluginObjectStored.languages[lang] = data;
+                pluginObjectStored.languages[langKey] = data;
               })
             );
 
@@ -65,6 +70,9 @@ export class PluginLoaderFakeService {
 
       switchMap(() => {
         return from(this.addToList(pluginId));
+      }),
+      switchMap(() => {
+        return this.load(pluginId, lang, true);
       })
     );
   }
@@ -90,31 +98,15 @@ export class PluginLoaderFakeService {
     );
   }
 
-  loadAll(lang: string) {
-    this.translateService.use(lang);
-
-    return from(this.getAllInstalled()).pipe(
-      switchMap(list => {
-        const obss = [];
-
-        list.forEach(pluginId => {
-          obss.push(this.load(pluginId, lang));
-        });
-
-        return forkJoin(obss);
-      })
-    );
-  }
-
-  private load<T>(pluginId: string, lang: string) {
+  private load<T>(pluginId: string, lang: string, isFirstLoad: boolean) {
     return from(this.storage.get(pluginId)).pipe(
       tap((plugin: PluginObjectStored) => {
-        return this.initialize(plugin, lang);
+        return this.initialize(plugin, lang, isFirstLoad);
       })
     );
   }
 
-  private initialize(plugin: PluginObjectStored, lang: string) {
+  private initialize(plugin: PluginObjectStored, lang: string, isFirstLoad: boolean) {
     const moduleType = PluginModule;
 
     const pluginService = this.injector.get(moduleType.pluginService) as PluginBaseService;
@@ -122,6 +114,10 @@ export class PluginLoaderFakeService {
     this.pluginsMap.set(plugin.manifest.id, { plugin, moduleFactory: null, moduleRef: null });
 
     pluginService.initialize();
+
+    if (isFirstLoad) {
+      pluginService.afterInstall();
+    }
 
     if (plugin.languages.hasOwnProperty(lang)) {
       pluginService.setTranslation(lang, plugin.languages[lang]);

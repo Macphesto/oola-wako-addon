@@ -1,5 +1,5 @@
-import { Component, Injector, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { PluginLoaderService } from '../services/plugin-loarder/plugin-loader.service';
+import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { PluginLoaderService } from '@wako-app/mobile-sdk';
 
 @Component({
   selector: 'app-tab2',
@@ -7,10 +7,11 @@ import { PluginLoaderService } from '../services/plugin-loarder/plugin-loader.se
   styleUrls: ['settings.page.scss']
 })
 export class SettingsPage implements OnInit {
-  @ViewChild('settingsRef', { read: ViewContainerRef })
+  @ViewChild('settingsRef', {read: ViewContainerRef})
   settingsRef: ViewContainerRef;
 
-  constructor(private pluginLoader: PluginLoaderService) {}
+  constructor(private pluginLoader: PluginLoaderService) {
+  }
 
   ngOnInit() {
     this.loadPlugin();

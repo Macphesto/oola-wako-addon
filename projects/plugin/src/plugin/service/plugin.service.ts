@@ -5,13 +5,21 @@ import { TranslateService } from '@ngx-translate/core';
 @Injectable({
   providedIn: 'root'
 })
-export class MyPluginService extends PluginBaseService {
+export class PluginService extends PluginBaseService {
   constructor(protected translate: TranslateService) {
     super();
   }
 
   initialize() {
     logData('plugin initialized');
+  }
+
+  afterInstall(): any {
+    logData('plugin installed');
+  }
+
+  afterUpdate(): any {
+    logData('plugin updated');
   }
 
   setTranslation(lang: string, translations: any): any {

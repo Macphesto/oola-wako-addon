@@ -1,8 +1,9 @@
 {
   "version": "1.1.0",
   "id": "plugin.my-plugin",
-  "name": "My Plugin",
-  "description": "The description",
+  "name": "My First Plugin",
+  "description": "Will make your life better",
+  "author": "wako",
   "actions": ["movies", "episodes"],
   "entryPoint": "/plugin.my-plugin.js",
   "languages": {

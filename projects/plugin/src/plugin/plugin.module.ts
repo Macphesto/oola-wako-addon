@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { IonicModule } from '@ionic/angular';
-import { MyPluginService } from './service/my-plugin.service';
+import { PluginService } from './service/plugin.service';
 import { MovieButtonComponent } from './movie-button/movie-button.component';
 
 import { PluginBaseModule } from '@wako-app/mobile-sdk';
@@ -16,10 +16,10 @@ const components = [MovieButtonComponent, EpisodeButtonComponent, SettingsCompon
   imports: [CommonModule, IonicModule.forRoot(), TranslateModule.forRoot()],
   declarations: [...components],
   entryComponents: [...components],
-  providers: [MyPluginService]
+  providers: [PluginService]
 })
 export class PluginModule extends PluginBaseModule {
-  static pluginService = MyPluginService;
+  static pluginService = PluginService;
   static settingsComponent = SettingsComponent;
   static movieComponent = MovieButtonComponent;
   static episodeComponent = EpisodeButtonComponent;

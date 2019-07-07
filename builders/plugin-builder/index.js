@@ -30,7 +30,7 @@ class PluginBuilder extends build_angular_1.BrowserBuilder {
             // put here other common dependencies
             '@ionic/angular': 'ionic.angular',
             '@ionic/storage': 'ionic.storage',
-            '@wako-app/mobile-sdk': 'wako.mobile-sdk',
+            '@wako-app/mobile-sdk': 'wako-app.mobile-sdk',
             '@ngx-translate/core': 'ngx-translate.core'
         };
         const ngCompilerPluginInstance = config.plugins.find(x => x.constructor && x.constructor.name === 'AngularCompilerPlugin');
