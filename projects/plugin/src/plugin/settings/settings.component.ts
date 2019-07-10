@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { logData } from '../service/plugin.service';
+import { logData } from '../services/tools';
 
 @Component({
   templateUrl: './settings.component.html',

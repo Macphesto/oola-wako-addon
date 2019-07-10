@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { PluginBaseService, wakoLog } from '@wako-app/mobile-sdk';
+import { PluginBaseService } from '@wako-app/mobile-sdk';
 import { TranslateService } from '@ngx-translate/core';
+import { logData } from './tools';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class PluginService extends PluginBaseService {
   constructor(protected translate: TranslateService) {
     super();
@@ -27,8 +26,4 @@ export class PluginService extends PluginBaseService {
     this.translate.use(lang);
     this.translate.setTranslation(lang, translations);
   }
-}
-
-export function logData(...data: any) {
-  wakoLog('plugin.my-plugin', data);
 }

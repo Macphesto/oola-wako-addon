@@ -17,11 +17,22 @@ import { PluginModule } from '../../projects/plugin/src/plugin/plugin.module';
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, TranslateModule.forRoot(), IonicStorageModule.forRoot(), PluginModule],
+  imports: [
+    BrowserModule,
+    IonicModule.forRoot({
+      swipeBackEnabled: true,
+      backButtonText: '',
+      mode: 'md'
+    }),
+    AppRoutingModule,
+    TranslateModule.forRoot(),
+    IonicStorageModule.forRoot(),
+    PluginModule
+  ],
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: RouteReuseStrategy, useClass: IonicRouteStrategy},
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {
       provide: PluginLoaderService,
       useClass: PluginLoaderFakeService
@@ -29,5 +40,4 @@ import { PluginModule } from '../../projects/plugin/src/plugin/plugin.module';
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {
-}
+export class AppModule {}

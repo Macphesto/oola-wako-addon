@@ -14,7 +14,17 @@ import { IonicStorageModule } from '@ionic/storage';
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, TranslateModule.forRoot(), IonicStorageModule.forRoot()],
+  imports: [
+    BrowserModule,
+    IonicModule.forRoot({
+      swipeBackEnabled: true,
+      backButtonText: '',
+      mode: 'md'
+    }),
+    AppRoutingModule,
+    TranslateModule.forRoot(),
+    IonicStorageModule.forRoot()
+  ],
   providers: [StatusBar, SplashScreen, { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent]
 })

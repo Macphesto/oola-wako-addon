@@ -174,7 +174,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "./builders:plugin",
+          "builder": "@wako-app/mobile-sdk/builders:plugin",
           "options": {
             "outputPath": "dist",
             "index": "",
