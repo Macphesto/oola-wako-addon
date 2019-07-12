@@ -3,22 +3,24 @@ import { ComponentFactoryResolver, Injectable, Injector, ViewContainerRef } from
 import {
   EpisodeDetailBaseComponent,
   MovieDetailBaseComponent,
-  PluginBaseService, PluginManifest,
-  PluginMap, PluginObjectStored,
+  PluginBaseService,
+  PluginDetail,
+  PluginManifest,
+  PluginModuleMap,
   WakoBaseHttpService
 } from '@wako-app/mobile-sdk';
 import { forkJoin, from, of } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Storage } from '@ionic/storage';
-import { switchMap, tap } from 'rxjs/operators';
+import { mapTo, switchMap, tap } from 'rxjs/operators';
 import { PluginModule } from '../../../projects/plugin/src/plugin/plugin.module';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PluginLoaderFakeService {
-  private pluginsMap = new Map<string, PluginMap>();
+  private pluginModuleMap = new Map<string, PluginModuleMap>();
 
   constructor(
     private translateService: TranslateService,
@@ -41,33 +43,36 @@ export class PluginLoaderFakeService {
         paths.pop();
         const baseUrl = paths.join('/');
 
-        const pluginObjectStored = new PluginObjectStored();
+        const pluginDetail = new PluginDetail();
 
-        pluginObjectStored.manifestUrl = manifestUrl;
-        pluginObjectStored.manifest = manifest;
+        pluginDetail.manifestUrl = manifestUrl;
+        pluginDetail.manifest = manifest;
 
-        pluginObjectStored.source = null;
+        pluginDetail.source = null;
 
         if (manifest.languages) {
-          pluginObjectStored.languages = {};
+          pluginDetail.languages = {};
           const obss = [];
           Object.keys(manifest.languages).forEach(langKey => {
             const langUrl = manifest.languages[langKey].match('http') ? manifest.languages[langKey] : baseUrl + manifest.languages[langKey];
 
             const obs = WakoBaseHttpService.get(langUrl).pipe(
               tap(data => {
-                pluginObjectStored.languages[langKey] = data;
+                pluginDetail.languages[langKey] = data;
               })
             );
 
             obss.push(obs);
           });
 
-          return forkJoin(obss);
+          return forkJoin(obss).pipe(mapTo(pluginDetail));
         }
-        return from(this.storage.set(pluginObjectStored.manifest.id, pluginObjectStored));
-      }),
 
+        return of(pluginDetail);
+      }),
+      switchMap(pluginDetail => {
+        return from(this.savePluginDetail(pluginDetail.manifest.id, pluginDetail));
+      }),
       switchMap(() => {
         return from(this.addToList(pluginId));
       }),
@@ -75,6 +80,14 @@ export class PluginLoaderFakeService {
         return this.load(pluginId, lang, true);
       })
     );
+  }
+
+  private savePluginDetail(pluginId: string, pluginDetail: PluginDetail) {
+    return this.storage.set(pluginId, pluginDetail);
+  }
+
+  private getPluginDetail(pluginId: string) {
+    return this.storage.get(pluginId) as Promise<PluginDetail>;
   }
 
   private getAllInstalled(): Promise<string[]> {
@@ -99,33 +112,43 @@ export class PluginLoaderFakeService {
   }
 
   private load<T>(pluginId: string, lang: string, isFirstLoad: boolean) {
-    return from(this.storage.get(pluginId)).pipe(
-      tap((plugin: PluginObjectStored) => {
-        return this.initialize(plugin, lang, isFirstLoad);
+    return from(this.getPluginDetail(pluginId)).pipe(
+      tap(pluginDetail => {
+        const moduleType = PluginModule;
+
+        const pluginService = this.injector.get(moduleType.pluginService) as PluginBaseService;
+
+        this.pluginModuleMap.set(pluginDetail.manifest.id, {
+          pluginDetail,
+          moduleFactory: null,
+          moduleRef: null
+        });
+
+        pluginService.initialize();
+
+        if (isFirstLoad) {
+          pluginService.afterInstall();
+        }
+
+        this.setLang(pluginId, lang);
       })
     );
   }
 
-  private initialize(plugin: PluginObjectStored, lang: string, isFirstLoad: boolean) {
+  setLang(pluginId: string, lang: string) {
+    const pluginModule = this.pluginModuleMap.get(pluginId);
+
     const moduleType = PluginModule;
 
     const pluginService = this.injector.get(moduleType.pluginService) as PluginBaseService;
 
-    this.pluginsMap.set(plugin.manifest.id, { plugin, moduleFactory: null, moduleRef: null });
-
-    pluginService.initialize();
-
-    if (isFirstLoad) {
-      pluginService.afterInstall();
-    }
-
-    if (plugin.languages.hasOwnProperty(lang)) {
-      pluginService.setTranslation(lang, plugin.languages[lang]);
+    if (pluginModule.pluginDetail.languages.hasOwnProperty(lang)) {
+      pluginService.setTranslation(lang, pluginModule.pluginDetail.languages[lang]);
     }
   }
 
   createComponent(action: PluginAction | 'settings', viewContainerRef: ViewContainerRef, data?: any) {
-    this.pluginsMap.forEach(pluginMap => {
+    this.pluginModuleMap.forEach(pluginMap => {
       const moduleType = PluginModule;
 
       if (action === 'movies' && moduleType.movieComponent) {
