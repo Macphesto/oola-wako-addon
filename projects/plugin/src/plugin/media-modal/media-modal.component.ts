@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Episode, Movie, Show } from '@wako-app/mobile-sdk';
+import { BrowserService, Episode, Movie, Show, ToastService } from '@wako-app/mobile-sdk';
 import { ModalController } from '@ionic/angular';
 
 @Component({
@@ -14,14 +14,21 @@ export class MediaModalComponent implements OnInit {
   show: Show;
   episode: Episode;
 
-  constructor(private modalCtrl: ModalController) {
+  constructor(private modalCtrl: ModalController, private browserService: BrowserService, private toastService: ToastService) {
   }
 
   ngOnInit() {
+    this.toastService.simpleMessage('openMedia', {
+      imdbId: this.movie ? this.movie.imdbId : this.show.imdbId
+    });
   }
 
 
   dismiss() {
     this.modalCtrl.dismiss();
+  }
+
+  openImdb(imdbId: string) {
+    this.browserService.open(`http://www.imdb.com/title/${imdbId}/`, false);
   }
 }

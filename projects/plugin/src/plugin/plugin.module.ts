@@ -5,7 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { PluginService } from './services/plugin.service';
 import { MovieButtonComponent } from './movie-button/movie-button.component';
 
-import { PluginBaseModule } from '@wako-app/mobile-sdk';
+import { BrowserService, PluginBaseModule, ToastService } from '@wako-app/mobile-sdk';
 import { SettingsComponent } from './settings/settings.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { EpisodeButtonComponent } from './episode-button/episode-button.component';
@@ -18,7 +18,7 @@ const components = [MovieButtonComponent, EpisodeButtonComponent, SettingsCompon
   imports: [CommonModule, FormsModule, IonicModule.forRoot(), TranslateModule.forRoot()],
   declarations: [...components],
   entryComponents: [...components],
-  providers: [PluginService] // Add your services here. Do not use provideIn: 'root' in your services
+  providers: [PluginService, BrowserService, ToastService] // Add your services here. Do not use provideIn: 'root' in your services
 })
 export class PluginModule extends PluginBaseModule {
   static pluginService = PluginService;

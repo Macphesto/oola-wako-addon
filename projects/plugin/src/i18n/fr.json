@@ -1,4 +1,5 @@
 {
+  "openMedia": "Test Toast - Media {{imdbId}}",
   "settings": {
     "title": "Mon Plugin - Paramètres"
   }

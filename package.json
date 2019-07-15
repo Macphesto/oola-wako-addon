@@ -1,12 +1,10 @@
 {
   "name": "wako-addon-starter-kit",
   "version": "0.0.1",
-  "author": "Ionic Framework",
-  "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "start:wako-like": "npm run clean && npm run build:plugin:dev && concurrently \" npm run watch:plugin \"  \" ng run wako-like:serve \" ",
+    "start:wako-like": "npm run clean && npm run build:plugin:dev && concurrently \" npm run watch:plugin \"  \" ng run wako-like:serve\" ",
     "build": "npm run clean && npm run build:plugin",
     "test": "ng test",
     "lint": "ng lint",
@@ -34,7 +32,7 @@
     "@ionic/angular": "^4.6.2",
     "@ionic/storage": "^2.2.0",
     "@ngx-translate/core": "^11.0.1",
-    "@wako-app/mobile-sdk": "^0.1.32",
+    "@wako-app/mobile-sdk": "^0.1.35",
     "concurrently": "^4.1.1",
     "core-js": "^2.5.4",
     "prettier": "^1.18.2",

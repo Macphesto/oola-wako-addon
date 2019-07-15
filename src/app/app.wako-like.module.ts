@@ -10,6 +10,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicStorageModule } from '@ionic/storage';
+import { ModuleLoaderService, PluginLoaderService } from '@wako-app/mobile-sdk';
 
 @NgModule({
   declarations: [AppComponent],
@@ -25,7 +26,13 @@ import { IonicStorageModule } from '@ionic/storage';
     TranslateModule.forRoot(),
     IonicStorageModule.forRoot()
   ],
-  providers: [StatusBar, SplashScreen, { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [
+    StatusBar,
+    SplashScreen,
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    ModuleLoaderService,
+    PluginLoaderService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppWakoLikeModule {}
