@@ -29,6 +29,6 @@ export class MediaModalComponent implements OnInit {
   }
 
   openImdb(imdbId: string) {
-    this.browserService.open(`http://www.imdb.com/title/${imdbId}/`, false);
+    this.browserService.open(`http://www.imdb.com/title/${imdbId}/`);
   }
 }
