@@ -3,6 +3,15 @@
     <ion-title>
       Episode
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button
+        color="medium"
+        size="small"
+        (click)="displayPopover($event)"
+      >
+        <ion-icon slot="icon-only" name="more"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 

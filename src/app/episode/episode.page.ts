@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { Episode, PluginLoaderService, Show } from '@wako-app/mobile-sdk';
+import { PopoverController } from '@ionic/angular';
+import { EpisodePopoverOptionComponent } from './episode-popover-option/episode-popover-option.component';
 
 @Component({
   selector: 'app-tab1',
@@ -7,10 +9,11 @@ import { Episode, PluginLoaderService, Show } from '@wako-app/mobile-sdk';
   styleUrls: ['episode.page.scss']
 })
 export class EpisodePage implements OnInit {
-  @ViewChild('episodeRef', { read: ViewContainerRef })
+  @ViewChild('episodeRef', {read: ViewContainerRef})
   episodeVCRef: ViewContainerRef;
 
-  constructor(private pluginLoader: PluginLoaderService) {}
+  constructor(private pluginLoader: PluginLoaderService, private popoverCtrl: PopoverController) {
+  }
 
   ngOnInit() {
     this.loadPlugin();
@@ -29,5 +32,16 @@ export class EpisodePage implements OnInit {
       show,
       episode
     });
+  }
+
+  displayPopover(event) {
+    this.popoverCtrl
+      .create({
+        component: EpisodePopoverOptionComponent,
+        event: event
+      })
+      .then(popover => {
+        popover.present();
+      });
   }
 }

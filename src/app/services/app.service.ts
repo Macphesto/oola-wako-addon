@@ -1,11 +1,17 @@
 import { Injectable } from '@angular/core';
-import { PluginLoaderService } from '@wako-app/mobile-sdk';
+import { KodiAppService, PluginLoaderService } from '@wako-app/mobile-sdk';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppService {
   constructor(protected pluginLoader: PluginLoaderService) {
+
+    KodiAppService.currentHost = {
+      name: 'MyHost',
+      host: '127.0.0.1',
+      port: 8080
+    };
   }
 
   loadPlugins() {

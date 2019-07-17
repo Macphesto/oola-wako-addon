@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { Movie, PluginLoaderService } from '@wako-app/mobile-sdk';
+import { PopoverController } from '@ionic/angular';
+import { MoviePopoverOptionComponent } from './movie-popover-option/movie-popover-option.component';
 
 @Component({
   selector: 'app-tab1',
@@ -10,7 +12,7 @@ export class MoviePage implements OnInit {
   @ViewChild('movieRef', { read: ViewContainerRef })
   movieVCRef: ViewContainerRef;
 
-  constructor(private pluginLoader: PluginLoaderService) {}
+  constructor(private pluginLoader: PluginLoaderService, private popoverCtrl: PopoverController) {}
 
   ngOnInit() {
     this.loadPlugin();
@@ -24,5 +26,16 @@ export class MoviePage implements OnInit {
     this.pluginLoader.createComponent('movies', this.movieVCRef, {
       movie
     });
+  }
+
+  displayPopover(event) {
+    this.popoverCtrl
+      .create({
+        component: MoviePopoverOptionComponent,
+        event: event
+      })
+      .then(popover => {
+        popover.present();
+      });
   }
 }

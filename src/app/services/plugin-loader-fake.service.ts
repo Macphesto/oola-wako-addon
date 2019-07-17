@@ -3,17 +3,18 @@ import { ComponentFactoryResolver, Injectable, Injector, ViewContainerRef } from
 import {
   EpisodeDetailBaseComponent,
   MovieDetailBaseComponent,
+  PluginAction,
   PluginBaseService,
   PluginDetail,
   PluginManifest,
   PluginModuleMap,
   WakoBaseHttpService
 } from '@wako-app/mobile-sdk';
-import { forkJoin, from, of } from 'rxjs';
+import { forkJoin, from, of, throwError } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Storage } from '@ionic/storage';
-import { mapTo, switchMap, tap } from 'rxjs/operators';
+import { catchError, mapTo, switchMap, tap } from 'rxjs/operators';
 import { PluginModule } from '../../../projects/plugin/src/plugin/plugin.module';
 
 @Injectable({
@@ -33,10 +34,11 @@ export class PluginLoaderFakeService {
 
   install(manifestUrl: string, lang: string) {
     manifestUrl = manifestUrl.replace('/plugins/', '/');
-
     let pluginId = null;
     return WakoBaseHttpService.get<PluginManifest>(manifestUrl).pipe(
       switchMap(manifest => {
+        manifest.url = manifestUrl;
+
         pluginId = manifest.id;
 
         const paths = manifestUrl.split('/');
@@ -57,6 +59,10 @@ export class PluginLoaderFakeService {
             const langUrl = manifest.languages[langKey].match('http') ? manifest.languages[langKey] : baseUrl + manifest.languages[langKey];
 
             const obs = WakoBaseHttpService.get(langUrl).pipe(
+              catchError(err => {
+                console.error('Incorrect JSON: ' + langUrl, err);
+                return throwError(err);
+              }),
               tap(data => {
                 pluginDetail.languages[langKey] = data;
               })
@@ -147,20 +153,30 @@ export class PluginLoaderFakeService {
     }
   }
 
-  createComponent(action: PluginAction | 'settings', viewContainerRef: ViewContainerRef, data?: any) {
+  createComponent(action: PluginAction, viewContainerRef: ViewContainerRef, data?: any) {
     this.pluginModuleMap.forEach(pluginMap => {
       const moduleType = PluginModule;
 
-      if (action === 'movies' && moduleType.movieComponent) {
+
+      if (action === 'movies' && pluginMap.pluginDetail.manifest.actions.includes(action) && moduleType.movieComponent) {
         const compFactory = this.componentFactoryResolver.resolveComponentFactory<MovieDetailBaseComponent>(moduleType.movieComponent);
         const movieComponent = viewContainerRef.createComponent<MovieDetailBaseComponent>(compFactory);
 
         movieComponent.instance.setMovie(data.movie);
-      } else if (action === 'episodes' && moduleType.episodeComponent) {
+      } else if (action === 'movies-options' && pluginMap.pluginDetail.manifest.actions.includes(action) && moduleType.movieOptionComponent) {
+        const compFactory = this.componentFactoryResolver.resolveComponentFactory(moduleType.movieOptionComponent);
+        viewContainerRef.createComponent(compFactory);
+
+      } else if (action === 'episodes' && pluginMap.pluginDetail.manifest.actions.includes(action) && moduleType.episodeComponent) {
         const compFactory = this.componentFactoryResolver.resolveComponentFactory<EpisodeDetailBaseComponent>(moduleType.episodeComponent);
         const episodeComponent = viewContainerRef.createComponent<EpisodeDetailBaseComponent>(compFactory);
 
         episodeComponent.instance.setShowEpisode(data.show, data.episode);
+      } else if (action === 'episodes-options' && pluginMap.pluginDetail.manifest.actions.includes(action) && moduleType.episodeOptionComponent) {
+
+        const compFactory = this.componentFactoryResolver.resolveComponentFactory(moduleType.episodeOptionComponent);
+        viewContainerRef.createComponent(compFactory);
+
       } else if (action === 'settings' && moduleType.settingsComponent) {
         const compFactory = this.componentFactoryResolver.resolveComponentFactory<any>(moduleType.settingsComponent);
         viewContainerRef.createComponent<any>(compFactory);
@@ -169,4 +185,3 @@ export class PluginLoaderFakeService {
   }
 }
 
-declare type PluginAction = 'movies' | 'episodes';
